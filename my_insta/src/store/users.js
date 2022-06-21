@@ -1,17 +1,20 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Users } from "../data/User";
 import {
   checkId,
   getUserById,
-  loginApi,
-  postUser,
-  getUserByUserId,
   getUserByKey,
-  putUsers,
+  getUserByUserId,
+  loginApi,
   loginCheckApi,
+  logoutApi,
+  postUser,
+  putUsers,
 } from "./usersApi";
 const initialState = {
-  myId: AsyncStorage.getItem("token"),
+  users: Users,
+  //   myId: AsyncStorage.getItem("token"),
   isLogin: AsyncStorage.getItem("token") === undefined ? true : false,
   me: {},
 };
@@ -47,7 +50,6 @@ export const loginCheck = createAsyncThunk(
     return;
   }
 );
-
 export const login = createAsyncThunk(LOGIN, async (user, thunkAPI) => {
   const { users } = thunkAPI.getState().users;
   const isLogin = await loginApi(users, user);
@@ -59,18 +61,6 @@ export const insertUser = createAsyncThunk(
     const { users } = thunkAPI.getState().users;
     const newUser = await postUser(users, user);
     return newUser;
-  }
-);
-export const updateUsers = createAsyncThunk(
-  UPDATE_USERS,
-  async (user, thunkAPI) => {
-    const { myId, users } = thunkAPI.getState().users;
-    // let formData = new FormData();
-    // formData.append("file", user.file);
-    // await fileUpload("post", "/upload", formData);
-    // const removeFileUser = { ...user, file: "", img: `/${user.file.name}` };
-    const newUsers = await putUsers(users, user, myId);
-    return { newUsers, user };
   }
 );
 export const selectUserById = createAsyncThunk(
@@ -91,6 +81,19 @@ export const selectUserByUserId = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk(LOGOUT, async (payload, thunkAPI) => {
+  const { myId } = thunkAPI.getState().users;
+  const isLogout = await logoutApi(myId);
+  return isLogout;
+});
+export const updateUsers = createAsyncThunk(
+  UPDATE_USERS,
+  async (user, thunkAPI) => {
+    const { myId, users } = thunkAPI.getState().users;
+    const newUsers = await putUsers(users, user, myId);
+    return { newUsers, user };
+  }
+);
 export const selectUserByKey = createAsyncThunk(
   SELECT_USER_BY_KEY,
   async (key, thunkAPI) => {
@@ -116,36 +119,26 @@ export const usersSlice = createSlice({
         }
       })
       .addCase(login.fulfilled, (state, { payload }) => {
-        if (payload.isLogin) {
-          localStorage.setItem("token", payload.user.token);
-          return {
-            ...state,
-            isLogin: payload.login, //
-            me: payload.user,
-          };
+        if (payload) {
+          AsyncStorage.setItem("token", payload.user.token);
+          return { ...state, isLogin: true, me: payload.user };
         } else {
           return { ...state, isLogin: false };
         }
       })
+      .addCase(insertUser.fulfilled, (state, { payload }) => {
+        return { ...state, users: payload };
+      })
       .addCase(logout.fulfilled, (state, { payload }) => {
-        localStorage.removeItem("token");
+        AsyncStorage.clear();
         return { ...state, isLogin: false, me: {}, myId: "" };
       })
       .addCase(updateUsers.fulfilled, (state, { payload }) => {
         const { newUsers, user } = payload;
-        return { me: { ...state.me, ...user }, users: newUsers };
-        // return { ...state, me: payload.removeFileUser };
-      })
-      .addCase(insertUser.fulfilled, (state, { payload }) => {
-        return { ...state, users: payload };
+
+        return { ...state, me: { ...state.me, ...user }, users: newUsers };
       });
   },
-});
-
-export const logout = createAsyncThunk(LOGOUT, async (payload, thunkAPI) => {
-  const { myId } = thunkAPI.getState().users;
-  const isLogout = await logoutApi(myId);
-  return isLogout;
 });
 
 export default usersSlice.reducer;
