@@ -1,9 +1,14 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused, useLinkTo } from "@react-navigation/native";
 import { useEffect } from "react";
+import { Button, Text, View, TouchableOpacity, Image } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { selectMyFollower, selectMyFollowing } from "../store/follows";
 import { selectMyPost } from "../store/posts";
 import { View, Text } from "react-native";
+import { logout } from "../store/users";
+import PostScreen from "./PostScreen";
+
 const ProfileScreen = () => {
   const linkto = useLinkTo();
   const { name, img } = useSelector((state) => state.users.me);
@@ -20,12 +25,42 @@ const ProfileScreen = () => {
   useEffect(() => {
     selectMy();
   }, [isFocused]);
-
+  const out = () => {
+    dispatch(logout);
+  };
   return (
-    <View>
-      <Text>{`name : ${name}`}</Text>
-      <Text>{`name : ${img}`}</Text>
-    </View>
+    <>
+      <View>
+        <Text>{`${name}`}</Text>
+        <View>
+          <Button title="+" onPress={() => linkto("/PostAdd")}></Button>
+          <Button title="logout" onPress={out}></Button>
+        </View>
+      </View>
+      <View>
+        <TouchableOpacity onPress={() => linkto("/UserUpdate")}>
+          <Image
+            source={{ uri: `${IMG_PATH}${img}` }}
+            style={{ width: 30, height: 30 }}
+          ></Image>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <View>
+          <Text>게시글</Text>
+          <Text>{myPosts.posts.length}</Text>
+        </View>
+        <View>
+          <Text>myFollower</Text>
+          <Text>{myFollower.follows.length}</Text>
+        </View>
+        <View>
+          <Text>myFollowing</Text>
+          <Text>{myFollowing.follows.length}</Text>
+        </View>
+        <PostScreen post={myPosts.posts}></PostScreen>
+      </View>
+    </>
   );
 };
 export default ProfileScreen;

@@ -13,7 +13,7 @@ export const customAxios = async (url, method, data) => {
     method,
     data,
     headers: {
-      Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
@@ -26,7 +26,7 @@ export const fileAxios = async (url, method, data) => {
     method,
     data,
     headers: {
-      Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   });
