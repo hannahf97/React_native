@@ -3,9 +3,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { setStatusBarBackgroundColor } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import IconIcon from "react-native-vector-icons/Ionicons";
-import HomeScreen from "../screen/HomeScreen";
-import SettingsScreen from "../screen/SettingsScreen";
-import ProfileScreen from "../screen/ProfileScreen";
+import HomeScreen from "../HomeScreen";
+import SettingsScreen from "../SettingsScreen";
+import ProfileScreen from "../ProfileScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 

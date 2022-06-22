@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, loginCheck } from "../../store/users";
 import PostUpdateScreen from "../PostUpdateScreen";
 import BottomTabScreen from "./BottomTabScreen";
-import LoginNavigate from "./LoginNavigete";
+import LoginNavigate from "./LoginNavigate";
 
 const IndexNavigate = () => {
   const isLogin = useSelector((state) => state.users.isLogin);

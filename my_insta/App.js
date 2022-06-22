@@ -2,8 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
-import BottomTapScreen from "./src/navigation/BottomTabScreen";
-import IndexNavigate from "./src/navigation/IndexNavigate";
+import IndexNavigate from "./src/screen/navigation/IndexNavigate";
 import store from "./src/store/store";
 
 export default function App() {

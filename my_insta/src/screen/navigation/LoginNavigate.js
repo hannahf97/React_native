@@ -1,15 +1,54 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "../LoginScreen";
-const Stack = createStackNavigator();
-const LoginNavigate = () => {
+import { useState } from "react";
+import { Button, StyleSheet, TextInput, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { login } from "../store/users";
+
+const LoginScreen = () => {
+  const dispath = useDispatch();
+  const [user, setUser] = useState({
+    id: "",
+    password: "",
+  });
+  const onChangeTextHandler = (name, value) => {
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
+  const onSubmit = () => {
+    dispath(login(user));
+  };
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="login">
-        <Stack.Screen name="login" component={LoginScreen}></Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View style={styles.form}>
+      <TextInput
+        style={styles.inputBox} //
+        placeholder="id"
+        onChangeText={(value) => onChangeTextHandler("id", value)}
+        autoCapitalize="none"
+      ></TextInput>
+      <TextInput
+        style={styles.inputBox} //
+        placeholder="password"
+        onChangeText={(value) => onChangeTextHandler("password", value)}
+        autoCapitalize="none"
+        secureTextEntry={true}
+      ></TextInput>
+      <Button title="login" onPress={onSubmit}></Button>
+    </View>
   );
 };
 
-export default LoginNavigate;
+export default LoginScreen;
+
+const styles = StyleSheet.create({
+  form: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  inputBox: {
+    borderBottomColor: "gray",
+    borderBottomWidth: 1,
+    marginBottom: 10,
+  },
+});
